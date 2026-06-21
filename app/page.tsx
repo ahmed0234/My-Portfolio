@@ -1,11 +1,11 @@
-const page = () => {
-  return (
-    <div>
-      <h1 className="font-poppins font-bold tracking-wider text-yellow-500 underline text-7xl text-center">
-        Portfolio
-      </h1>
-    </div>
-  );
-};
+import { HeroSection } from "@/components/hero";
+import HowIThink from "@/components/sections/HowIThink";
 
-export default page;
+export default function Page() {
+  return (
+    <main>
+      <HeroSection />
+      <HowIThink />
+    </main>
+  );
+}
