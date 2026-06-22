@@ -27,7 +27,9 @@ const CodeIcon = () => (
 // Navigation Links config
 const NAV_LINKS = [
   { name: "Work", href: "#work" },
-  { name: "Experience", href: "#experience" },
+  { name: "Architecture", href: "#architecture" },
+  { name: "Journey", href: "#journey" },
+  { name: "Feedback", href: "#feedback" },
   { name: "Lab", href: "#lab" },
 ];
 
@@ -203,7 +205,7 @@ export default function Navbar() {
 
   // Section Observer for Active Navigation Spy
   useEffect(() => {
-    const sections = ["work", "experience", "lab"];
+    const sections = ["work", "architecture", "journey", "feedback", "lab"];
     const observers = sections.map((id) => {
       const el = document.getElementById(id);
       if (!el) return null;
