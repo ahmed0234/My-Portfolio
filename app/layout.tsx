@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins, Manrope } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Navbar, Footer, FloatingCTA } from "@/components/navigation";
 
@@ -42,6 +43,20 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col justify-between">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-7KG9RRLTCF"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-7KG9RRLTCF');
+          `}
+        </Script>
+
         <div className="flex-1 flex flex-col">
           <Navbar />
           {children}
