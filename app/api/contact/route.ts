@@ -3,6 +3,15 @@ import { transporter } from "@/lib/mail";
 import { contactSchema } from "@/lib/validations/contact";
 import { z } from "zod";
 
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -59,18 +68,68 @@ export async function POST(req: Request) {
     const validated = contactSchema.parse(body);
 
     // 4. Send Email via Nodemailer
+    const escapedName = escapeHtml(validated.name);
+    const escapedEmail = escapeHtml(validated.email);
+    const escapedProjectDetails = escapeHtml(validated.projectDetails);
+
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: {
+        name: validated.name,
+        address: process.env.EMAIL_USER || "",
+      },
+      replyTo: validated.email,
       to: process.env.CONTACT_RECEIVER,
       subject: `🚀 New Portfolio Inquiry - ${validated.name}`,
       html: `
-        <div style="font-family: Arial, sans-serif;">
-          <h1>New Portfolio Inquiry</h1>
-          <p><strong>Name:</strong> ${validated.name}</p>
-          <p><strong>Email:</strong> ${validated.email}</p>
-          <hr />
-          <h2>Project Details</h2>
-          <p>${validated.projectDetails}</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; padding: 40px 20px; color: #111111; line-height: 1.6;">
+          <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 40px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);">
+            
+            <!-- Header -->
+            <div style="margin-bottom: 28px;">
+              <h2 style="font-size: 18px; font-weight: 700; color: #000000; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.05em;">New Inquiry</h2>
+              <p style="font-size: 14px; color: #737373; margin: 0;">You have received a new submission from your portfolio contact form.</p>
+            </div>
+            
+            <!-- Divider -->
+            <div style="height: 1px; background-color: #e5e5e5; margin-bottom: 28px;"></div>
+            
+            <!-- Details Section -->
+            <div style="margin-bottom: 28px;">
+              
+              <!-- Sender Info -->
+              <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 0 0 16px 0; width: 45%; vertical-align: top;">
+                    <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #737373; display: block; margin-bottom: 4px;">From</span>
+                    <span style="font-size: 14px; color: #000000; font-weight: 600;">${escapedName}</span>
+                  </td>
+                  <td style="padding: 0 0 16px 0; width: 55%; vertical-align: top;">
+                    <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #737373; display: block; margin-bottom: 4px;">Email Address</span>
+                    <span style="font-size: 14px; color: #000000;"><a href="mailto:${escapedEmail}" style="color: #000000; text-decoration: underline;">${escapedEmail}</a></span>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Project Details -->
+              <div style="margin-bottom: 28px;">
+                <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #737373; display: block; margin-bottom: 8px;">Message / Project Details</span>
+                <div style="font-size: 14px; line-height: 1.6; color: #171717; background-color: #f9f9f9; border-left: 2px solid #000000; padding: 18px 24px; white-space: pre-wrap; font-style: italic;">${escapedProjectDetails}</div>
+              </div>
+              
+            </div>
+            
+            <!-- Divider -->
+            <div style="height: 1px; background-color: #e5e5e5; margin-bottom: 28px;"></div>
+            
+            <!-- Reply Button -->
+            <div style="text-align: center;">
+              <a href="mailto:${escapedEmail}?subject=${encodeURIComponent(`Re: Portfolio Inquiry - ${validated.name}`)}" 
+                 style="display: inline-block; background-color: #000000; color: #ffffff; font-size: 13px; font-weight: 600; text-decoration: none; padding: 12px 28px; border-radius: 4px; letter-spacing: 0.05em; text-transform: uppercase;">
+                Reply to Inquiry
+              </a>
+            </div>
+            
+          </div>
         </div>
       `,
     });
