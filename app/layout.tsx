@@ -27,9 +27,31 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Antigravity | Minimalist Portfolio & Design System Dashboard",
+  title: "Ahmed | Web Developer & Website Creator Portfolio",
   description:
-    "A premium, monochrome developer portfolio showcase designed strictly using CSS Custom Properties and a dark-themed visual hierarchy.",
+    "I'm Ahmed, a professional web developer and website creator specializing in React, Next.js, and modern UI technologies. I deliver high-performance, responsive web applications and custom websites. Currently open to freelance web development services and full-time work opportunities.",
+  keywords: [
+    "Ahmed",
+    "Web Developer",
+    "Website Creator",
+    "Frontend Developer",
+    "React Developer",
+    "Next.js Developer",
+    "Freelance Web Developer",
+    "Full-time Software Engineer",
+    "Full time Software Engineer",
+    "Web Development Services",
+    "Portfolio",
+    "Ahmed Portfolio",
+  ],
+  icons: {
+    icon: [
+      { url: "/CodingSigns/coding.png" },
+    ],
+    shortcut: [
+      { url: "/CodingSigns/coding.png" },
+    ],
+  },
 };
 
 export default function RootLayout({

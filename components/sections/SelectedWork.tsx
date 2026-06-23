@@ -98,38 +98,39 @@ const PROJECTS: Project[] = [
     id: "cinehive",
     num: "02",
     name: "CineHive",
-    industry: "Entertainment Platform",
+    industry: "Movie Discovery & Exploration Platform",
     impact:
-      "Making movie discovery faster and more enjoyable through a beautifully designed streaming and discovery experience.",
+      "Simplifying movie discovery with a fast, engaging interface that allows users to search, explore curated categories, and dive into detailed cinematic information.",
     role: "Core Frontend Developer",
     challenge:
-      "Traditional media libraries overwhelm users with cluttered, heavy interfaces and slow navigation search query processing.",
+      "Cluttered movie databases and sluggish search interfaces often frustrate users looking for quick recommendations or comprehensive details.",
     solution:
-      "Created a modern cinema discovery platform featuring advanced filters, dynamic cast profiling, and high-performance search queries.",
+      "Built a sleek movie discovery app with categorized landing sections (Trending, Popular, Top Rated) for easy browsing, an instant debounced search engine, dynamic cast profiles, and rich movie details powered by live TMDB endpoints.",
     tech: [
       "Next.js",
       "TailwindCSS",
       "Shadcn UI",
       "TMDB APIs",
+      "Framer Motion",
       "Debounced Search",
     ],
     decisions: [
-      "Instant Search Querying",
-      "Smart API Caching Layer",
-      "Dynamic Category Trees",
-      "Virtual Grid Rendering",
+      "Instant Debounced Search",
+      "Curated Category Shelves",
+      "Hydrated Detail Overlays",
+      "Responsive Card Grids",
     ],
     metrics: [
-      { label: "Movies Indexed", value: "10K+" },
-      { label: "Search Speed", value: "<150ms" },
-      { label: "Rendering", value: "Smooth" },
+      { label: "Search Latency", value: "<150ms" },
+      { label: "Genre Shelves", value: "Curated" },
+      { label: "API Fetching", value: "On-demand" },
     ],
     image: "/projects/cinehive.png",
     liveUrl: "https://cinehive-alpha.vercel.app/",
     caseStudyUrl: "#",
     accentColor: "border-violet-500/20 text-violet-400",
     glowColor: "rgba(139,92,246,0.05)",
-    metricHighlight: "Instant Search UI",
+    metricHighlight: "Instant Movie Search",
     icon: FiActivity,
   },
   {
@@ -2127,20 +2128,13 @@ export default function SelectedWork() {
           </div>
 
           {/* Mobile Full-width CTA Action Drawers */}
-          <div className="flex flex-col gap-3 mt-4 mb-2">
+          <div className="mt-4 mb-2">
             <a
               href={activeProject.liveUrl}
-              className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 rounded-xl text-xs font-bold uppercase tracking-wider bg-zinc-100 text-zinc-950 border border-zinc-100 shadow-md active:scale-98 transition-all duration-150 cursor-pointer select-none"
+              className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 rounded-xl text-sm font-bold uppercase tracking-normal bg-zinc-100 text-zinc-950 border border-zinc-100 shadow-md active:scale-98 transition-all duration-150 cursor-pointer select-none"
             >
               <span>Visit Website</span>
               <FiExternalLink className="w-4 h-4" />
-            </a>
-            <a
-              href={activeProject.caseStudyUrl}
-              className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 rounded-xl text-xs font-bold uppercase tracking-wider bg-zinc-900 border border-zinc-800 text-zinc-200 hover:bg-zinc-800 active:scale-98 transition-all duration-150 cursor-pointer select-none"
-            >
-              <FiBookOpen className="w-4 h-4" />
-              <span>Explore Case Study</span>
             </a>
           </div>
         </div>
@@ -2361,21 +2355,14 @@ export default function SelectedWork() {
                 </ul>
 
                 {/* Launch Action Drawers */}
-                <div className="flex items-center gap-3 pt-3 border-t border-border/20">
+                <div className="pt-3 border-t border-border/20">
                   <a
                     target="_blank"
                     href={activeProject.liveUrl}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4.5 py-3 rounded-xl text-[11px] md:text-[12px] font-bold uppercase tracking-wider bg-zinc-100 text-zinc-950 border border-zinc-100 hover:bg-white hover:border-white hover:scale-[1.02] shadow-[0_4px_20px_rgba(255,255,255,0.12)] transition-all duration-200 cursor-pointer select-none"
+                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-4 rounded-xl text-xs md:text-sm font-bold uppercase tracking-normal bg-zinc-100 text-zinc-950 border border-zinc-100 hover:bg-white hover:border-white hover:scale-[1.02] shadow-[0_4px_20px_rgba(255,255,255,0.12)] transition-all duration-200 cursor-pointer select-none"
                   >
                     <span>Visit Website</span>
-                    <FiExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                  <a
-                    href={activeProject.caseStudyUrl}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4.5 py-3 rounded-xl text-[11px] md:text-[12px] font-bold uppercase tracking-wider bg-zinc-900/80 text-zinc-200 border border-zinc-800 hover:bg-zinc-800/85 hover:border-zinc-700 hover:scale-[1.02] transition-all duration-200 cursor-pointer select-none"
-                  >
-                    <FiBookOpen className="w-3.5 h-3.5" />
-                    <span>Explore Case Study</span>
+                    <FiExternalLink className="w-4 h-4" />
                   </a>
                 </div>
               </motion.div>
