@@ -114,7 +114,7 @@ export default function HeroSection() {
                 Explore My Work
                 <GoArrowRight className="w-4 h-4" />
               </MagneticButton>
-              <MagneticButton variant="secondary" href="#contact">
+              <MagneticButton variant="secondary" href="#worth-remembering">
                 Book a Meeting
                 <LuCalendarDays className="w-4 h-4" />
               </MagneticButton>

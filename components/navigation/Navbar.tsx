@@ -30,11 +30,10 @@ const NAV_LINKS = [
   { name: "Architecture", href: "#architecture" },
   { name: "Journey", href: "#journey" },
   { name: "Feedback", href: "#feedback" },
-  { name: "Lab", href: "#lab" },
 ];
 
 // Custom CTA Button Component
-export function NavbarCTA() {
+export function NavbarCTA({ onClick }: { onClick?: () => void }) {
   const ref = useRef<HTMLAnchorElement>(null);
 
   const x = useMotionValue(0);
@@ -79,10 +78,33 @@ export function NavbarCTA() {
     scale.set(1.02);
   };
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (onClick) {
+      onClick();
+      setTimeout(() => {
+        const el = document.getElementById("worth-remembering");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        } else {
+          window.location.hash = "worth-remembering";
+        }
+      }, 250);
+    } else {
+      const el = document.getElementById("worth-remembering");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.location.hash = "worth-remembering";
+      }
+    }
+  };
+
   return (
     <motion.a
       ref={ref}
-      href="#contact"
+      href="#worth-remembering"
+      onClick={handleClick}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -205,7 +227,7 @@ export default function Navbar() {
 
   // Section Observer for Active Navigation Spy
   useEffect(() => {
-    const sections = ["work", "architecture", "journey", "feedback", "lab"];
+    const sections = ["work", "architecture", "journey", "feedback"];
     const observers = sections.map((id) => {
       const el = document.getElementById(id);
       if (!el) return null;
@@ -236,13 +258,25 @@ export default function Navbar() {
   const handleScrollTo = (
     e: React.MouseEvent<HTMLAnchorElement>,
     targetId: string,
+    delayMs?: number
   ) => {
     e.preventDefault();
-    const el = document.getElementById(targetId);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+    if (delayMs) {
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        } else {
+          window.location.hash = targetId;
+        }
+      }, delayMs);
     } else {
-      window.location.hash = targetId;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.location.hash = targetId;
+      }
     }
   };
 
@@ -265,8 +299,14 @@ export default function Navbar() {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-            setIsOpen(false);
+            if (isOpen) {
+              setIsOpen(false);
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }, 250);
+            } else {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
           }}
           className="flex items-center gap-2 group select-none"
         >
@@ -349,7 +389,7 @@ export default function Navbar() {
                     href={link.href}
                     onClick={(e) => {
                       setIsOpen(false);
-                      handleScrollTo(e, link.href.slice(1));
+                      handleScrollTo(e, link.href.slice(1), 250);
                     }}
                     className="flex items-center justify-between py-2 px-3 rounded-lg font-sans font-medium text-[15px] tracking-tight hover:bg-card/50 transition-colors duration-300"
                     style={{
@@ -365,7 +405,7 @@ export default function Navbar() {
               })}
 
               <div className="pt-3 border-t border-border/60 flex justify-center">
-                <NavbarCTA />
+                <NavbarCTA onClick={() => setIsOpen(false)} />
               </div>
             </motion.div>
           )}

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { FaWhatsapp, FaInstagram, FaGithub } from "react-icons/fa6";
 import { SiUpwork } from "react-icons/si";
 import { FiMail, FiArrowRight } from "react-icons/fi";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 // ═══════════════════════════════════════════════════════════
 // SOCIAL CHANNELS DEFINITIONS
@@ -71,13 +72,17 @@ export default function WorthRemembering() {
   const [flickerActive, setFlickerActive] = useState(false);
 
   // Form handling
-  const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success">(
-    "idle",
-  );
+  const [formStatus, setFormStatus] = useState<
+    "idle" | "sending" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
   const [formState, setFormState] = useState({
     name: "",
     email: "",
     projectDetails: "",
+    website: "", // Honeypot field
   });
 
   // Cursor tracker variables
@@ -197,14 +202,52 @@ export default function WorthRemembering() {
   };
 
   // Form Submit
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formStatus !== "idle") return;
+    if (formStatus === "sending") return;
+
+    if (!turnstileToken) {
+      setErrorMessage("Please complete verification before submitting.");
+      setFormStatus("error");
+      return;
+    }
 
     setFormStatus("sending");
-    setTimeout(() => {
-      setFormStatus("success");
-    }, 1800);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formState,
+          turnstileToken,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setFormStatus("error");
+        setErrorMessage(
+          data.message ||
+            "Failed to send message. Please try again in a few moments.",
+        );
+        // Reset turnstile on error to enforce fresh verification
+        turnstileRef.current?.reset();
+        setTurnstileToken(null);
+      } else {
+        setFormStatus("success");
+      }
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      setFormStatus("error");
+      setErrorMessage("Server unavailable. Please try again later.");
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
+    }
   };
 
   // Animation configurations
@@ -432,7 +475,7 @@ export default function WorthRemembering() {
 
           <p className="text-base sm:text-lg font-sans text-text-secondary leading-relaxed max-w-[700px]">
             Whether it's a product, a business, a landing page, or an ambitious
-            idea—I'm always interested in building experiences that people
+            idea I'm always interested in building experiences that people
             genuinely enjoy using.
           </p>
         </motion.div>
@@ -644,8 +687,13 @@ export default function WorthRemembering() {
                           name: "",
                           email: "",
                           projectDetails: "",
+                          website: "",
                         });
+                        setTurnstileToken(null);
+                        setErrorMessage(null);
                         setFormStatus("idle");
+                        // Reset Turnstile widget
+                        turnstileRef.current?.reset();
                       }}
                       className="px-6 py-3 rounded-xl border border-border text-[11px] font-mono font-medium text-text-muted hover:text-text hover:border-text-secondary transition-all duration-300 cursor-pointer"
                     >
@@ -669,6 +717,21 @@ export default function WorthRemembering() {
                         Start your project brief
                       </h4>
                     </div>
+
+                    {errorMessage && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="p-4 bg-red-950/10 border border-red-500/20 rounded-xl flex flex-col gap-1 select-none"
+                      >
+                        <span className="text-[10px] font-mono tracking-widest text-red-400 uppercase">
+                          // Submission Error
+                        </span>
+                        <p className="text-xs font-sans text-red-200/90 leading-relaxed whitespace-pre-line">
+                          {errorMessage}
+                        </p>
+                      </motion.div>
+                    )}
 
                     {/* NAME FIELD */}
                     <div className="flex flex-col group">
@@ -728,6 +791,44 @@ export default function WorthRemembering() {
                         />
                         <div className="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 group-focus-within:shadow-[0_0_25px_rgba(250,250,250,0.028)]" />
                       </div>
+                    </div>
+
+                    {/* HONEYPOT FIELD */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        opacity: 0,
+                        width: 0,
+                        height: 0,
+                        zIndex: -10,
+                        pointerEvents: "none",
+                      }}
+                      aria-hidden="true"
+                    >
+                      <input
+                        type="text"
+                        name="website"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={formState.website}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+
+                    {/* CLOUDFLARE TURNSTILE CAPTCHA */}
+                    <div className="flex justify-center py-2">
+                      <Turnstile
+                        ref={turnstileRef}
+                        sitekey={
+                          process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""
+                        }
+                        options={{
+                          theme: "dark",
+                        }}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                        onExpire={() => setTurnstileToken(null)}
+                        onError={() => setTurnstileToken(null)}
+                      />
                     </div>
 
                     {/* PREMIUM SEND BUTTON */}

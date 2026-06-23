@@ -11,7 +11,7 @@ export default function Page() {
     <main>
       <HeroSection />
       <HowIThink />
-      <SelectedWork />
+      <SelectedWork />    
       <ArchitectureRoom />
       <Journey />
       <LaunchFeedback />
