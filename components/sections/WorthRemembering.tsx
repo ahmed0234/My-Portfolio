@@ -815,11 +815,11 @@ export default function WorthRemembering() {
                       />
                     </div>
 
-                    {/* CLOUDFLARE TURNSTILE CAPTCHA */}
+                     {/* CLOUDFLARE TURNSTILE CAPTCHA */}
                     <div className="flex justify-center py-2">
                       <Turnstile
                         ref={turnstileRef}
-                        sitekey={
+                        siteKey={
                           process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""
                         }
                         options={{
