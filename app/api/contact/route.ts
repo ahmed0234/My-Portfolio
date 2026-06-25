@@ -134,6 +134,36 @@ export async function POST(req: Request) {
       `,
     });
 
+    // 5. Submit Lead to Leads Hub
+    try {
+      const leadsHubSecretKey = process.env.LEADS_HUB_SECRET_KEY || process.env.WEBSITE_SECRET_KEY;
+      if (!leadsHubSecretKey) {
+        console.warn("LEADS_HUB_SECRET_KEY or WEBSITE_SECRET_KEY is not defined in environment variables.");
+      }
+
+      const leadsHubResponse = await fetch("https://leads-hub.com/api/leads/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          secretKey: leadsHubSecretKey || "YOUR_WEBSITE_SECRET_KEY",
+          FormDataJson: {
+            name: validated.name,
+            email: validated.email,
+            projectDetails: validated.projectDetails,
+          },
+        }),
+      });
+
+      if (!leadsHubResponse.ok) {
+        const errorText = await leadsHubResponse.text();
+        console.error(`Leads Hub submission failed with status ${leadsHubResponse.status}:`, errorText);
+      }
+    } catch (leadsHubError) {
+      console.error("Error submitting lead to Leads Hub:", leadsHubError);
+    }
+
     return NextResponse.json({
       success: true,
       message: "Message sent successfully."
